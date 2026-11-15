@@ -46,6 +46,6 @@ object DreamDiary {
     /** The placeholder line a transcript will later replace. Unique per recording because the file name is. */
     internal fun pendingLine(audioName: String, durationMs: Long): String {
         val seconds = durationMs / 1000
-        return "_Audio saved (${seconds}s), transcript pending: $audioName_"
+        return "_Audio saved (${seconds}s), transcript pending: ${audioName}_"
     }
 }
