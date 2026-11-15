@@ -33,6 +33,11 @@ misleading API.
 
 ## Snooze
 
+> **Dream Alarm fork:** there is no user-facing snooze any more. The full-screen
+> alarm offers *Record dream* and *Dismiss*; Back is ignored while ringing and
+> acts as Done while recording. The scheduler/receiver snooze plumbing described
+> below is still in the code (unused by the UI) and can be removed once CI is green.
+
 - The notification and full-screen alarm both offer a snooze **picker**
   (`SnoozePickerActivity`) with presets 5/10/15/30 min and 1/2/4/8 h. The
   notification also has a quick **Snooze** action that uses the configured

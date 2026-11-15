@@ -50,30 +50,30 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/snooze"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:minHeight="72dp"
-            android:text="@string/snooze"
-            android:textSize="22sp" />
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="@string/recording_status"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/custom"
-            style="@style/Widget.Material3.Button.TonalButton"
+            android:id="@+id/record"
+            style="@style/Widget.Material3.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:minHeight="72dp"
-            android:text="@string/custom"
+            android:text="@string/record_dream"
             android:textSize="22sp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/dismiss"
-            style="@style/Widget.Material3.Button"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

@@ -15,7 +15,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.malarm"
+        applicationId = "com.tiao.dreamalarm"
         minSdk = 26
         targetSdk = 36
         versionCode = 13
@@ -47,7 +47,7 @@ android {
     applicationVariants.all {
         outputs.all {
             (this as com.android.build.gradle.api.ApkVariantOutput).outputFileName =
-                "malarm.apk"
+                "dreamalarm.apk"
         }
     }
 }

@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -10,6 +11,10 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -29,6 +34,7 @@
 
         <activity
             android:name=".AlarmActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden"
             android:excludeFromRecents="true"
             android:exported="false"
             android:launchMode="singleTask"
@@ -45,12 +51,8 @@
             android:exported="false" />
 
         <activity
-            android:name=".SnoozePickerActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:showWhenLocked="true"
-            android:taskAffinity=""
-            android:theme="@style/Theme.Material3.DayNight.Dialog" />
+            android:name=".DiaryActivity"
+            android:exported="false" />
 
         <receiver
             android:name=".AlarmReceiver"

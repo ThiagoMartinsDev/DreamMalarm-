@@ -1,5 +1,13 @@
 # AGENTS.md
 
+> **This repository is a personal fork: Dream Alarm** (`com.tiao.dreamalarm`,
+> `ThiagoMartinsDev/DreamMalarm-`), based on Malarm by adriablo (MIT). Snooze is
+> replaced by a "Record dream" button that saves audio and a diary entry. The
+> "Repo and distribution contract" and "F-Droid guardrails" sections below
+> describe the upstream project and do **not** apply to this fork (the
+> `applicationId` is intentionally different and nothing is published to
+> F-Droid). The ground rules and workflow notes still apply.
+
 ## Ground rules (never violate)
 
 - **Never commit or push to any repository** (GitHub, GitLab, or otherwise)

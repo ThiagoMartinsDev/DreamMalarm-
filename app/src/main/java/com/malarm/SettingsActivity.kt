@@ -2,7 +2,6 @@ package com.malarm
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -57,9 +56,6 @@ class SettingsActivity : AppCompatActivity() {
 
         binding.toolbar.setNavigationOnClickListener { finish() }
 
-        binding.snoozeRow.setOnClickListener { showSnoozeDialog() }
-        updateSnoozeValue()
-
         binding.exportRow.setOnClickListener { exportLauncher.launch(AlarmExport.fileName()) }
         binding.importRow.setOnClickListener {
             importLauncher.launch(arrayOf("*/*"))
@@ -81,9 +77,6 @@ class SettingsActivity : AppCompatActivity() {
         }
         binding.githubRow.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, GITHUB_URL.toUri()))
-        }
-        binding.fdroidRow.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, FDROID_URL.toUri()))
         }
 
         binding.eventLogRow.setOnClickListener {
@@ -114,32 +107,7 @@ class SettingsActivity : AppCompatActivity() {
         Toast.makeText(this, resources.getQuantityString(R.plurals.remove_inactive_done, inactive.size, inactive.size), Toast.LENGTH_SHORT).show()
     }
 
-    private fun updateSnoozeValue() {
-        binding.snoozeValue.text = getString(R.string.minutes_format, store.snoozeMinutes())
-    }
-
-    private fun showSnoozeDialog() {
-        val labels = (1..60).map { getString(R.string.minutes_format, it) }.toTypedArray()
-        val picker = NumberPicker(this).apply {
-            minValue = 1
-            maxValue = 60
-            wrapSelectorWheel = false
-            value = store.snoozeMinutes().coerceIn(minValue, maxValue)
-            displayedValues = labels
-        }
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.snooze_duration)
-            .setView(picker)
-            .setPositiveButton(R.string.save) { _, _ ->
-                store.setSnoozeMinutes(picker.value)
-                updateSnoozeValue()
-            }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
-    }
-
     companion object {
-        private const val GITHUB_URL = "https://github.com/adriablo/malarm"
-        private const val FDROID_URL = "https://f-droid.org/packages/com.malarm/"
+        private const val GITHUB_URL = "https://github.com/ThiagoMartinsDev/DreamMalarm-"
     }
 }

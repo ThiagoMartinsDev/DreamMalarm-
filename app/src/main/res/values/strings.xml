@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Malarm</string>
+    <string name="app_name">Dream Alarm</string>
     <string name="add_alarm">Add alarm</string>
     <string name="new_alarm">New alarm</string>
     <string name="edit_alarm">Edit alarm</string>
     <string name="delete">Delete</string>
     <string name="dismiss">Dismiss</string>
-    <string name="snooze">Snooze</string>
-    <string name="custom">Custom</string>
+    <string name="record_dream">Record dream</string>
+    <string name="record_done">Done</string>
+    <string name="recording_status">Recording… tell me your dream</string>
+    <string name="recording_failed">Couldn\u2019t start recording</string>
+    <string name="mic_permission_needed">Microphone access is needed to record your dream. Allow it in Settings.</string>
+    <string name="dream_saved">Dream saved</string>
+    <string name="diary">Diary</string>
+    <string name="diary_empty">No dreams recorded yet</string>
+    <string name="share">Share</string>
     <string name="repeat">Repeat</string>
     <string name="date">Date</string>
     <string name="date_format">%1$s: %2$s</string>
@@ -46,18 +53,15 @@
     <string name="silent">Silent</string>
     <string name="notifications_permission_denied">Notifications are disabled. Alarms may not ring on time.</string>
     <string name="notifications_required_title">Notifications required</string>
-    <string name="notifications_required_message">Malarm needs notification permission.</string>
+    <string name="notifications_required_message">Dream Alarm needs notification permission.</string>
     <string name="allow_notifications">Allow notifications</string>
     <string name="open_settings">Open settings</string>
     <string name="full_screen_permission_denied">Full-screen alerts are disabled. Alarms may not appear over the lock screen.</string>
     <string name="exact_alarm_permission_required">Exact alarm access is required for reliable alarms.</string>
     <string name="allow">Allow</string>
     <string name="settings">Settings</string>
-    <string name="snooze_duration">Snooze duration</string>
-    <string name="minutes_format">%1$d min</string>
     <string name="version">Version</string>
     <string name="github">GitHub</string>
-    <string name="fdroid">F-Droid</string>
     <string name="version_format">%1$s (%2$d)</string>
     <string name="export_alarms">Export alarms</string>
     <string name="import_alarms">Import alarms</string>

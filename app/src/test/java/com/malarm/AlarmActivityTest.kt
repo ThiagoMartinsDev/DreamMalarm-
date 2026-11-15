@@ -1,11 +1,14 @@
 package com.malarm
 
+import android.Manifest
 import android.app.AlarmManager
+import android.app.Application
 import android.content.Context
 import android.os.Looper
+import android.view.View
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -36,13 +39,6 @@ class AlarmActivityTest {
     private val alarmManager
         get() = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    private fun scheduledSnoozes() =
-        shadowOf(alarmManager).scheduledAlarms.filter {
-            val saved = shadowOf(it.operation).savedIntent
-            saved?.action == AlarmScheduler.ACTION_ALARM &&
-                saved.getBooleanExtra(AlarmScheduler.EXTRA_IS_SNOOZE, false)
-        }
-
     private fun awaitEvent(type: EventType): AlarmEvent {
         repeat(50) {
             val events = runBlocking { EventLog.getAll(context) }
@@ -52,17 +48,10 @@ class AlarmActivityTest {
         throw AssertionError("event $type never appeared in the log")
     }
 
-    private fun assertDefaultSnoozeArmed() {
-        // Default snooze is 5 min (prefs cleared in setUp).
-        val before = android.os.SystemClock.elapsedRealtime()
-        val snooze = scheduledSnoozes().single()
-        val after = android.os.SystemClock.elapsedRealtime()
-        assertEquals(AlarmManager.ELAPSED_REALTIME_WAKEUP, snooze.type)
-        assertTrue(snooze.triggerAtMs in before + 5 * 60_000L..after + 5 * 60_000L)
-    }
-
     @Test
-    fun backPressSnoozesAndFinishes() {
+    fun backPressWhileRingingDoesNothing() {
+        // Back must not silence the alarm by accident: the screen stays up and
+        // nothing is dismissed or scheduled.
         store.save(Alarm(1, 8, 0, label = "Morning"))
         val controller = Robolectric.buildActivity(
             AlarmActivity::class.java,
@@ -70,11 +59,26 @@ class AlarmActivityTest {
         ).setup()
         controller.get().onBackPressedDispatcher.onBackPressed()
         shadowOf(Looper.getMainLooper()).idle()
-        assertTrue(controller.get().isFinishing)
-        assertDefaultSnoozeArmed()
-        val event = awaitEvent(EventType.SNOOZED)
-        assertEquals(1L, event.alarmId)
-        assertEquals("Morning", event.label)
+        assertFalse(controller.get().isFinishing)
+        assertTrue(shadowOf(alarmManager).scheduledAlarms.isEmpty())
+    }
+
+    @Test
+    fun recordWithoutMicrophonePermissionKeepsAlarmRinging() {
+        // A denied (or not yet granted) microphone must never silence the alarm.
+        shadowOf(context as Application).denyPermissions(Manifest.permission.RECORD_AUDIO)
+        store.save(Alarm(1, 8, 0, label = "Morning"))
+        val controller = Robolectric.buildActivity(
+            AlarmActivity::class.java,
+            AlarmActivity.intent(context, 1L),
+        ).setup()
+        controller.get().findViewById<android.widget.Button>(R.id.record).performClick()
+        shadowOf(Looper.getMainLooper()).idle()
+        assertFalse(controller.get().isFinishing)
+        assertEquals(
+            View.VISIBLE,
+            controller.get().findViewById<android.widget.Button>(R.id.dismiss).visibility,
+        )
     }
 
     @Test
@@ -84,23 +88,6 @@ class AlarmActivityTest {
             AlarmActivity.intent(context, 999L),
         ).setup()
         assertTrue(controller.get().isFinishing)
-    }
-
-    @Test
-    fun snoozeButtonArmsSnoozeAndFinishes() {
-        // Manual 5.2 logic: full-screen Snooze arms the default snooze
-        // directly (no broadcast round-trip) and logs SNOOZED.
-        store.save(Alarm(1, 8, 0, label = "Morning"))
-        val controller = Robolectric.buildActivity(
-            AlarmActivity::class.java,
-            AlarmActivity.intent(context, 1L),
-        ).setup()
-        controller.get().findViewById<android.widget.Button>(R.id.snooze).performClick()
-        shadowOf(Looper.getMainLooper()).idle()
-        assertTrue(controller.get().isFinishing)
-        assertDefaultSnoozeArmed()
-        val event = awaitEvent(EventType.SNOOZED)
-        assertEquals("5 min", event.details)
     }
 
     @Test
@@ -143,25 +130,5 @@ class AlarmActivityTest {
         assertEquals(1L, event.alarmId)
         assertEquals("Morning", event.label)
         assertEquals("Re-armed", event.details)
-    }
-
-    @Test
-    fun customButtonOpensSnoozePickerAndFinishes() {
-        // Manual 5.3 logic: full-screen Custom opens the picker for this alarm.
-        store.save(Alarm(1, 8, 0))
-        val controller = Robolectric.buildActivity(
-            AlarmActivity::class.java,
-            AlarmActivity.intent(context, 1L),
-        ).setup()
-        controller.get().findViewById<android.widget.Button>(R.id.custom).performClick()
-        shadowOf(Looper.getMainLooper()).idle()
-        assertTrue(controller.get().isFinishing)
-        val next = shadowOf(context as android.app.Application).nextStartedActivity
-        assertNotNull("expected SnoozePickerActivity to start", next)
-        assertEquals(
-            SnoozePickerActivity::class.java.name,
-            next!!.component?.className,
-        )
-        assertEquals(1L, next.getLongExtra(AlarmScheduler.EXTRA_ALARM_ID, -1))
     }
 }

@@ -9,9 +9,8 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 /**
- * Manual S11/11.5 (notification buttons fit): assert the ringing
- * notification actually carries the three expected actions. Layout
- * truncation itself stays a manual eyeball check.
+ * The ringing notification carries a single Dismiss action: there is no
+ * snooze, and recording a dream happens on the full-screen alarm.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
@@ -20,14 +19,12 @@ class AlarmNotifierTest {
     private val context get() = RuntimeEnvironment.getApplication()
 
     @Test
-    fun ringingNotificationHasSnoozeCustomDismissActions() {
+    fun ringingNotificationHasOnlyDismissAction() {
         val notification = AlarmNotifier.build(context, Alarm(1, 8, 0, label = "Morning"))
         val actions = notification.actions
         assertNotNull(actions)
-        assertEquals(3, actions!!.size)
-        assertEquals(context.getString(R.string.snooze), actions[0].title.toString())
-        assertEquals(context.getString(R.string.custom), actions[1].title.toString())
-        assertEquals(context.getString(R.string.dismiss), actions[2].title.toString())
+        assertEquals(1, actions!!.size)
+        assertEquals(context.getString(R.string.dismiss), actions[0].title.toString())
     }
 
     @Test

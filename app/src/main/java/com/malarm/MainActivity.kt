@@ -75,7 +75,14 @@ class MainActivity : AppCompatActivity() {
         if (!granted) {
             Snackbar.make(binding.root, R.string.full_screen_permission_denied, Snackbar.LENGTH_LONG).show()
         }
+        requestMicPermissionIfNeeded()
     }
+
+    // Asked up front so the permission dialog never appears while an alarm is
+    // ringing. A denial is handled where it matters: AlarmActivity asks again.
+    private val micPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,11 +127,16 @@ class MainActivity : AppCompatActivity() {
         binding.recycler.adapter = adapter
         binding.fab.setOnClickListener { showAlarmDialog(null) }
         binding.toolbar.setOnMenuItemClickListener { item ->
-            if (item.itemId == R.id.action_settings) {
-                startActivity(Intent(this, SettingsActivity::class.java))
-                true
-            } else {
-                false
+            when (item.itemId) {
+                R.id.action_settings -> {
+                    startActivity(Intent(this, SettingsActivity::class.java))
+                    true
+                }
+                R.id.action_diary -> {
+                    startActivity(Intent(this, DiaryActivity::class.java))
+                    true
+                }
+                else -> false
             }
         }
         binding.permissionAllow.setOnClickListener {
@@ -250,12 +262,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestFullScreenIntentPermissionIfNeeded() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val granted = ContextCompat.checkSelfPermission(
+                this, Manifest.permission.USE_FULL_SCREEN_INTENT,
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            if (!granted) {
+                fullScreenPermissionLauncher.launch(Manifest.permission.USE_FULL_SCREEN_INTENT)
+                return
+            }
+        }
+        requestMicPermissionIfNeeded()
+    }
+
+    private fun requestMicPermissionIfNeeded() {
         val granted = ContextCompat.checkSelfPermission(
-            this, Manifest.permission.USE_FULL_SCREEN_INTENT,
+            this, Manifest.permission.RECORD_AUDIO,
         ) == android.content.pm.PackageManager.PERMISSION_GRANTED
         if (!granted) {
-            fullScreenPermissionLauncher.launch(Manifest.permission.USE_FULL_SCREEN_INTENT)
+            micPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
         }
     }
 
